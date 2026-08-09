@@ -1,136 +1,139 @@
 from pathlib import Path
 import numpy as np
 import rasterio
-import matplotlib.pyplot as plt
 
-RAW_FOLDER = Path("data/raw/sentinel")
-OUTPUT_FOLDER = Path("data/processed")
-
-OUTPUT_FOLDER.mkdir(parents=True, exist_ok=True)
+from config.settings import RAW_DATA, PROCESSED_DATA
 
 
-def find_band(safe_folder, band):
+def find_band(safe_path, band):
     """
-    Find a Sentinel-2 band inside a .SAFE folder.
-    Example:
-    B02 -> ..._B02_10m.jp2
+    Find a Sentinel-2 10m band inside a .SAFE directory.
     """
+    matches = list(safe_path.rglob(f"*_{band}_10m.jp2"))
 
-    files = list(safe_folder.rglob(f"*_{band}_10m.jp2"))
+    if not matches:
+        raise FileNotFoundError(
+            f"Band {band} not found in {safe_path.name}"
+        )
 
-    if len(files) == 0:
-        return None
-
-    return files[0]
-
-
-def normalize(image):
-    image = image.astype(np.float32)
-
-    image -= image.min()
-
-    if image.max() != 0:
-        image /= image.max()
-
-    return image
+    return matches[0]
 
 
-for city in RAW_FOLDER.iterdir():
+def read_band(path):
+    """
+    Read a raster band as float32.
+    """
+    with rasterio.open(path) as src:
+        data = src.read(1).astype(np.float32)
+        profile = src.profile.copy()
 
-    if not city.is_dir():
-        continue
+    return data, profile
 
-    print(f"\n==============================")
-    print(city.name)
-    print("==============================")
 
-    city_output = OUTPUT_FOLDER / city.name
-    city_output.mkdir(exist_ok=True)
+def calculate_ndvi(red, nir):
+    """
+    NDVI = (NIR - Red) / (NIR + Red)
+    """
+    denominator = nir + red
 
-    for safe in city.glob("*.SAFE"):
+    ndvi = np.divide(
+        nir - red,
+        denominator,
+        out=np.zeros_like(nir, dtype=np.float32),
+        where=denominator != 0
+    )
 
-        print(f"\nProcessing:")
-        print(safe.name)
+    return ndvi
 
-        blue = find_band(safe, "B02")
-        green = find_band(safe, "B03")
-        red = find_band(safe, "B04")
-        nir = find_band(safe, "B08")
 
-        if None in [blue, green, red, nir]:
-            print("❌ Missing bands -> skipped")
+def calculate_exg(red, green, blue):
+    """
+    Excess Green Index:
+    ExG = 2G - R - B
+    """
+    return (2 * green - red - blue).astype(np.float32)
+
+
+def save_raster(path, data, profile):
+    """
+    Save the calculated index as a GeoTIFF.
+    Float32 is supported by GeoTIFF.
+    """
+    profile.update(
+        driver="GTiff",
+        dtype="float32",
+        count=1,
+        compress="deflate"
+    )
+
+    with rasterio.open(path, "w", **profile) as dst:
+        dst.write(data.astype(np.float32), 1)
+
+
+def process_safe(safe_path, output_folder):
+    print(f"\nProcessing:")
+    print(safe_path.name)
+
+    blue_path = find_band(safe_path, "B02")
+    green_path = find_band(safe_path, "B03")
+    red_path = find_band(safe_path, "B04")
+    nir_path = find_band(safe_path, "B08")
+
+    blue, profile = read_band(blue_path)
+    green, _ = read_band(green_path)
+    red, _ = read_band(red_path)
+    nir, _ = read_band(nir_path)
+
+    print("✓ Bands loaded")
+
+    ndvi = calculate_ndvi(red, nir)
+    exg = calculate_exg(red, green, blue)
+
+    output_folder.mkdir(parents=True, exist_ok=True)
+
+    name = safe_path.name.replace(".SAFE", "")
+
+    ndvi_file = output_folder / f"{name}_NDVI.tif"
+    exg_file = output_folder / f"{name}_ExG.tif"
+
+    save_raster(ndvi_file, ndvi, profile)
+    save_raster(exg_file, exg, profile)
+
+    print(f"✓ NDVI saved: {ndvi_file.name}")
+    print(f"✓ ExG saved:  {exg_file.name}")
+
+
+def main():
+    for city_folder in RAW_DATA.iterdir():
+
+        if not city_folder.is_dir():
             continue
 
-        with rasterio.open(blue) as src:
-            B = src.read(1).astype(np.float32)
-            profile = src.profile
+        print("\n" + "=" * 30)
+        print(city_folder.name)
+        print("=" * 30)
 
-        with rasterio.open(green) as src:
-            G = src.read(1).astype(np.float32)
+        safe_folders = list(city_folder.glob("*.SAFE"))
 
-        with rasterio.open(red) as src:
-            R = src.read(1).astype(np.float32)
+        if not safe_folders:
+            print("No SAFE folders found.")
+            continue
 
-        with rasterio.open(nir) as src:
-            NIR = src.read(1).astype(np.float32)
+        output_folder = (
+            PROCESSED_DATA / city_folder.name
+        )
 
-        print("✓ Bands loaded")
+        for safe_path in safe_folders:
 
-        # ----------------------------
-        # NDVI
-        # ----------------------------
+            try:
+                process_safe(
+                    safe_path,
+                    output_folder
+                )
 
-        ndvi = (NIR - R) / (NIR + R + 1e-6)
+            except Exception as e:
+                print(f"✗ Error: {e}")
 
-        # ----------------------------
-        # ExG
-        # ----------------------------
 
-        exg = 2 * G - R - B
-
-        ndvi_norm = normalize(ndvi)
-        exg_norm = normalize(exg)
-
-        profile.update(
-             driver="GTiff",
-            dtype=rasterio.float32,
-            count=1,
-            compress="lzw"
-)
-
-        ndvi_file = city_output / f"{safe.stem}_NDVI.tif"
-        exg_file = city_output / f"{safe.stem}_EXG.tif"
-
-        with rasterio.open(ndvi_file, "w", **profile) as dst:
-            dst.write(ndvi_norm.astype(np.float32), 1)
-
-        with rasterio.open(exg_file, "w", **profile) as dst:
-            dst.write(exg_norm.astype(np.float32), 1)
-
-        plt.figure(figsize=(10,4))
-
-        plt.subplot(1,2,1)
-        plt.imshow(ndvi_norm, cmap="RdYlGn")
-        plt.title("NDVI")
-        plt.axis("off")
-
-        plt.subplot(1,2,2)
-        plt.imshow(exg_norm, cmap="Greens")
-        plt.title("ExG")
-        plt.axis("off")
-
-        plt.tight_layout()
-
-        preview = city_output / f"{safe.stem}_preview.png"
-
-        plt.savefig(preview, dpi=150)
-        plt.close()
-
-        print("✓ NDVI saved")
-        print("✓ ExG saved")
-        print("✓ Preview saved")
-
-print("\n===================================")
-print("Finished!")
-print("Results saved in data/processed/")
-print("===================================")
+if __name__ == "__main__":
+    main()
