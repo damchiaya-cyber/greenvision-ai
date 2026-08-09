@@ -1,0 +1,23 @@
+# Environment & secrets
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environment
+.venv/
+venv/
+env/
+
+# Satellite data - too large for GitHub
+data/raw/
+data/processed/
+
+# Generated files
+*.log
+
+# IDE
+.vscode/
+.idea/
