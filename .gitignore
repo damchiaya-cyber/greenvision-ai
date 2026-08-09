@@ -1,12 +1,12 @@
 # Environment & secrets
 .env
 
-# Python
+# Python cache
 __pycache__/
 *.py[cod]
 *.pyo
 
-# Virtual environment
+# Virtual environments
 .venv/
 venv/
 env/
@@ -21,3 +21,15 @@ data/processed/
 # IDE
 .vscode/
 .idea/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Testing / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# OS files
+.DS_Store
+Thumbs.db
