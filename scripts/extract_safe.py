@@ -10,7 +10,7 @@ for city in RAW_FOLDER.iterdir():
     if not city.is_dir():
         continue
 
-    print(f"\n📁 {city.name}")
+    print(f"\n {city.name}")
 
     for zip_path in city.glob("*.zip"):
 

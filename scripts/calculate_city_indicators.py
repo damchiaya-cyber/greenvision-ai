@@ -8,10 +8,6 @@ import rasterio
 from rasterio.mask import mask as raster_mask
 
 
-# ============================================================
-# PATHS
-# ============================================================
-
 PROJECT_DIR = Path(__file__).resolve().parent.parent
 
 PREDICTION_DIR = (
@@ -38,9 +34,6 @@ OUTPUT_DIR.mkdir(
 )
 
 
-# ============================================================
-# CITY CONFIGURATION
-# ============================================================
 
 CITIES = {
     "Barcelona": {
@@ -79,11 +72,6 @@ def find_prediction(pattern):
 
     return matches[0]
 
-
-# ============================================================
-# LOAD CITY BOUNDARY
-# ============================================================
-
 def load_boundary(path):
 
     if not path.exists():
@@ -112,10 +100,6 @@ def load_boundary(path):
     return geometry
 
 
-# ============================================================
-# ANALYZE CITY
-# ============================================================
-
 def analyze_city(city_name, config):
 
     print("\n" + "=" * 70)
@@ -136,10 +120,6 @@ def analyze_city(city_name, config):
         f"\nBoundary:\n{boundary_path}"
     )
 
-    # --------------------------------------------------------
-    # Load raster
-    # --------------------------------------------------------
-
     with rasterio.open(prediction_path) as src:
 
         raster_crs = src.crs
@@ -148,17 +128,9 @@ def analyze_city(city_name, config):
             f"\nRaster CRS: {raster_crs}"
         )
 
-        # ----------------------------------------------------
-        # Load boundary
-        # ----------------------------------------------------
-
         geometry = load_boundary(
             boundary_path
         )
-
-        # ----------------------------------------------------
-        # Reproject boundary to raster CRS
-        # ----------------------------------------------------
 
         boundary_gdf = gpd.GeoDataFrame(
             geometry=[geometry],
@@ -173,10 +145,6 @@ def analyze_city(city_name, config):
 
         geometry = boundary_gdf.geometry.iloc[0]
 
-        # ----------------------------------------------------
-        # Clip prediction to city
-        # ----------------------------------------------------
-
         clipped, clipped_transform = raster_mask(
             src,
             [geometry],
@@ -186,10 +154,6 @@ def analyze_city(city_name, config):
         )
 
         clipped_mask = clipped[0]
-
-        # ----------------------------------------------------
-        # Determine valid pixels
-        # ----------------------------------------------------
 
         valid_pixels = (
             clipped_mask >= 0
@@ -210,10 +174,6 @@ def analyze_city(city_name, config):
                 f"{city_name} boundary."
             )
 
-        # ----------------------------------------------------
-        # Pixel dimensions
-        # ----------------------------------------------------
-
         pixel_width = abs(
             clipped_transform.a
         )
@@ -226,10 +186,6 @@ def analyze_city(city_name, config):
             pixel_width *
             pixel_height
         )
-
-        # ----------------------------------------------------
-        # Areas
-        # ----------------------------------------------------
 
         total_area_m2 = (
             total_pixels *
@@ -251,20 +207,12 @@ def analyze_city(city_name, config):
             1_000_000
         )
 
-        # ----------------------------------------------------
-        # Coverage
-        # ----------------------------------------------------
-
         green_coverage = (
             green_pixels /
             total_pixels
         ) * 100
 
-        # ----------------------------------------------------
-        # Save clipped mask
-        # ----------------------------------------------------
-
-        clipped_path = (
+        clipped_path =(
             OUTPUT_DIR /
             f"{city_name.lower()}_green_mask.tif"
         )
@@ -293,13 +241,10 @@ def analyze_city(city_name, config):
                 1
             )
 
-    # ========================================================
-    # RESULTS
-    # ========================================================
 
     results = {
 
-        "city": city_name,
+        "city": city_name ,
 
         "prediction_file": (
             prediction_path.name
@@ -338,10 +283,6 @@ def analyze_city(city_name, config):
         )
     }
 
-    # ========================================================
-    # SAVE JSON
-    # ========================================================
-
     json_path = (
         OUTPUT_DIR /
         f"{city_name.lower()}.json"
@@ -358,10 +299,6 @@ def analyze_city(city_name, config):
             f,
             indent=4
         )
-
-    # ========================================================
-    # PRINT RESULTS
-    # ========================================================
 
     print("\n" + "-" * 70)
 
@@ -406,11 +343,6 @@ def analyze_city(city_name, config):
 
     return results
 
-
-# ============================================================
-# MAIN
-# ============================================================
-
 def main():
 
     print("=" * 70)
@@ -440,10 +372,6 @@ def main():
             )
 
             print(error)
-
-    # ========================================================
-    # CITY COMPARISON
-    # ========================================================
 
     if all_results:
 

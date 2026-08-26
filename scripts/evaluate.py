@@ -4,20 +4,11 @@ import numpy as np
 import tensorflow as tf
 
 
-# ============================================================
-# CONFIGURATION
-# ============================================================
-
 MODEL_PATH = Path("models/greenvision_unet.keras")
 DATASET_DIR = Path("data/dataset")
 
 BATCH_SIZE = 16
 THRESHOLD = 0.5
-
-
-# ============================================================
-# METRICS
-# ============================================================
 
 def dice_score(y_true, y_pred):
     """
@@ -113,10 +104,6 @@ def recall_score(y_true, y_pred):
     )
 
 
-# ============================================================
-# DATA LOADING
-# ============================================================
-
 def load_dataset(split):
     """
     Load NumPy image and mask patches created by create_dataset.py.
@@ -167,7 +154,6 @@ def load_dataset(split):
     X = np.asarray(images, dtype=np.float32)
     y = np.asarray(masks, dtype=np.float32)
 
-    # Ensure channel dimension
     if X.ndim == 3:
         X = X[..., np.newaxis]
 
@@ -177,19 +163,12 @@ def load_dataset(split):
     return X, y
 
 
-# ============================================================
-# EVALUATION
-# ============================================================
-
 def evaluate_model():
 
     print("=" * 60)
     print("GREENVISION AI - MODEL EVALUATION")
     print("=" * 60)
 
-    # --------------------------------------------------------
-    # Check model
-    # --------------------------------------------------------
 
     if not MODEL_PATH.exists():
 
@@ -212,9 +191,6 @@ def evaluate_model():
 
     print("✓ Model loaded")
 
-    # --------------------------------------------------------
-    # Load validation dataset
-    # --------------------------------------------------------
 
     print("\nLoading validation dataset...")
 
@@ -236,9 +212,6 @@ def evaluate_model():
 
         return
 
-    # --------------------------------------------------------
-    # Prediction
-    # --------------------------------------------------------
 
     print("\nGenerating predictions...")
 
@@ -248,7 +221,6 @@ def evaluate_model():
         verbose=1
     )
 
-    # Convert probabilities to binary masks
 
     predictions_binary = (
         predictions >= THRESHOLD
@@ -257,10 +229,6 @@ def evaluate_model():
     y_val_binary = (
         y_val >= THRESHOLD
     ).astype(np.float32)
-
-    # --------------------------------------------------------
-    # Metrics
-    # --------------------------------------------------------
 
     dice = dice_score(
         y_val_binary,
@@ -282,15 +250,10 @@ def evaluate_model():
         predictions_binary
     )
 
-    # Pixel accuracy
-
     accuracy = np.mean(
         y_val_binary == predictions_binary
     )
 
-    # --------------------------------------------------------
-    # Results
-    # --------------------------------------------------------
 
     print("\n" + "=" * 60)
     print("EVALUATION RESULTS")
@@ -320,10 +283,6 @@ def evaluate_model():
     print("EVALUATION COMPLETE")
     print("=" * 60)
 
-
-# ============================================================
-# ENTRY POINT
-# ============================================================
 
 if __name__ == "__main__":
     evaluate_model()

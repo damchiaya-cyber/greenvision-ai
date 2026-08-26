@@ -7,19 +7,10 @@ import streamlit as st
 import matplotlib.pyplot as plt
 
 
-# ============================================================
-# CONFIGURATION
-# ============================================================
-
 PROJECT_DIR = Path(__file__).resolve().parent
 
 PREDICTION_DIR = PROJECT_DIR / "outputs" / "predictions"
 INDICATOR_DIR = PROJECT_DIR / "outputs" / "indicators"
-
-
-# ============================================================
-# PAGE CONFIGURATION
-# ============================================================
 
 st.set_page_config(
     page_title="GreenVision AI",
@@ -27,11 +18,6 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded"
 )
-
-
-# ============================================================
-# CUSTOM STYLE
-# ============================================================
 
 st.markdown(
     """
@@ -61,10 +47,6 @@ st.markdown(
 )
 
 
-# ============================================================
-# HEADER
-# ============================================================
-
 st.markdown(
     '<div class="main-title">🌱 GreenVision AI</div>',
     unsafe_allow_html=True
@@ -88,9 +70,6 @@ st.markdown(
 st.divider()
 
 
-# ============================================================
-# CHECK INDICATOR DATA
-# ============================================================
 
 comparison_file = INDICATOR_DIR / "city_comparison.csv"
 
@@ -109,10 +88,6 @@ if not comparison_file.exists():
     st.stop()
 
 
-# ============================================================
-# LOAD CITY INDICATORS
-# ============================================================
-
 @st.cache_data
 def load_city_data():
 
@@ -126,10 +101,6 @@ def load_city_data():
 city_data = load_city_data()
 
 
-# ============================================================
-# CITY SELECTION
-# ============================================================
-
 st.sidebar.header("🌍 Study Area")
 
 available_cities = city_data["city"].tolist()
@@ -139,10 +110,6 @@ selected_city = st.sidebar.selectbox(
     available_cities
 )
 
-
-# ============================================================
-# SELECT CITY DATA
-# ============================================================
 
 city_row = city_data[
     city_data["city"] == selected_city
@@ -162,10 +129,6 @@ green_coverage = float(
 )
 
 
-# ============================================================
-# CITY TITLE
-# ============================================================
-
 st.markdown(
     f'<div class="section-title">📍 {selected_city}</div>',
     unsafe_allow_html=True
@@ -176,10 +139,6 @@ st.write(
     "U-Net vegetation segmentation."
 )
 
-
-# ============================================================
-# MAIN INDICATORS
-# ============================================================
 
 col1, col2, col3 = st.columns(3)
 
@@ -211,16 +170,10 @@ with col3:
 st.divider()
 
 
-# ============================================================
-# GREEN SPACE VISUALIZATION
-# ============================================================
-
 st.subheader(
     f"🗺️ Green-space segmentation — {selected_city}"
 )
 
-
-# Find corresponding clipped mask
 
 clipped_mask = (
     INDICATOR_DIR /
@@ -262,10 +215,6 @@ if clipped_mask.exists():
     ) = load_clipped_mask(clipped_mask)
 
 
-    # --------------------------------------------------------
-    # Plot
-    # --------------------------------------------------------
-
     fig, ax = plt.subplots(
         figsize=(12, 8)
     )
@@ -295,9 +244,6 @@ else:
     )
 
 
-# ============================================================
-# GREEN / NON-GREEN COMPARISON
-# ============================================================
 
 st.subheader(
     "📊 Green-space composition"
@@ -356,11 +302,6 @@ with col2:
 
     plt.close(fig)
 
-
-# ============================================================
-# CITY COMPARISON
-# ============================================================
-
 st.divider()
 
 st.subheader(
@@ -390,11 +331,6 @@ if len(city_data) >= 2:
         hide_index=True,
         width="stretch"
     )
-
-
-    # --------------------------------------------------------
-    # Coverage comparison
-    # --------------------------------------------------------
 
     fig, ax = plt.subplots(
         figsize=(10, 5)
@@ -438,10 +374,6 @@ if len(city_data) >= 2:
 
     plt.close(fig)
 
-
-# ============================================================
-# MODEL PERFORMANCE
-# ============================================================
 
 st.divider()
 
@@ -499,10 +431,6 @@ st.caption(
 )
 
 
-# ============================================================
-# TECHNICAL INFORMATION
-# ============================================================
-
 st.divider()
 
 with st.expander("🔬 Technical information"):
@@ -547,10 +475,6 @@ with st.expander("🔬 Technical information"):
     )
 
 
-# ============================================================
-# DATA FILES
-# ============================================================
-
 with st.expander("📁 Generated results"):
 
     st.write(
@@ -571,10 +495,6 @@ with st.expander("📁 Generated results"):
         language="text"
     )
 
-
-# ============================================================
-# FOOTER
-# ============================================================
 
 st.divider()
 

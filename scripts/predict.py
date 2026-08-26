@@ -1,14 +1,9 @@
 from pathlib import Path
-
 import numpy as np
 import rasterio
 import tensorflow as tf
 import matplotlib.pyplot as plt
 
-
-# ============================================================
-# CONFIGURATION
-# ============================================================
 
 MODEL_PATH = Path("models/greenvision_unet.keras")
 
@@ -18,10 +13,6 @@ OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 PATCH_SIZE = 128
 THRESHOLD = 0.5
 
-
-# ============================================================
-# LOAD MODEL
-# ============================================================
 
 def load_model():
 
@@ -36,10 +27,6 @@ def load_model():
 
     return model
 
-
-# ============================================================
-# LOAD NDVI
-# ============================================================
 
 def load_ndvi(path):
 
@@ -68,10 +55,6 @@ def load_ndvi(path):
 
     return ndvi, normalized, profile
 
-
-# ============================================================
-# PREDICT FULL IMAGE
-# ============================================================
 
 def predict_image(model, normalized):
 
@@ -150,10 +133,6 @@ def predict_image(model, normalized):
     return prediction
 
 
-# ============================================================
-# SAVE RESULTS
-# ============================================================
-
 def save_raster(
     path,
     data,
@@ -176,11 +155,6 @@ def save_raster(
             data.astype(np.float32),
             1
         )
-
-
-# ============================================================
-# VISUALIZATION
-# ============================================================
 
 def create_visualization(
     ndvi,
@@ -250,11 +224,6 @@ def create_visualization(
         f"✓ Visualization saved: {output}"
     )
 
-
-# ============================================================
-# GREEN SPACE METRICS
-# ============================================================
-
 def calculate_metrics(
     prediction,
     pixel_size=10
@@ -297,10 +266,6 @@ def calculate_metrics(
         green_area_km2
     )
 
-
-# ============================================================
-# MAIN
-# ============================================================
 
 def main():
 
@@ -347,8 +312,6 @@ def main():
             normalized
         )
 
-        # Save probability map
-
         probability_path = (
             OUTPUT_DIR /
             f"{name}_probability.tif"
@@ -365,7 +328,6 @@ def main():
             f"  {probability_path}"
         )
 
-        # Binary mask
 
         mask = (
             prediction >= THRESHOLD
@@ -387,8 +349,6 @@ def main():
             f"  {mask_path}"
         )
 
-        # Metrics
-
         coverage, area = calculate_metrics(
             prediction
         )
@@ -402,8 +362,6 @@ def main():
             f"Estimated green-space area: "
             f"{area:.2f} km²"
         )
-
-        # Visualization
 
         create_visualization(
             ndvi,

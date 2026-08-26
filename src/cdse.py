@@ -31,10 +31,6 @@ class CDSEClient:
         self.token = None
         self.headers = None
 
-    # =====================================================
-    # LOGIN
-    # =====================================================
-
     def login(self):
 
         print("Connecting to Copernicus...")
@@ -80,10 +76,6 @@ class CDSEClient:
             f"))"
         )
 
-    # =====================================================
-    # SEARCH
-    # =====================================================
-
     def search_products(self, latitude, longitude):
 
         self.login()
@@ -122,10 +114,6 @@ class CDSEClient:
 
         return data.get("value", [])
 
-    # =====================================================
-    # PRINT RESULTS
-    # =====================================================
-
     def print_products(self, products):
 
         print()
@@ -142,9 +130,6 @@ class CDSEClient:
 
             print()
 
-    # =====================================================
-    # DOWNLOAD URL
-    # =====================================================
 
     def get_download_url(self, product_id):
 
@@ -152,10 +137,6 @@ class CDSEClient:
             "https://zipper.dataspace.copernicus.eu/odata/v1/"
             f"Products({product_id})/$value"
         )
-
-    # =====================================================
-    # DOWNLOAD
-    # =====================================================
 
     def download_product(
         self,

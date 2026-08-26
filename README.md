@@ -6,7 +6,7 @@
 
 GreenVision AI is an **AI and remote-sensing project** that explores how satellite imagery can be used to automatically identify urban green spaces and transform them into meaningful environmental indicators.
 
-The project combines **Computer Vision, Machine Learning, geospatial data analysis, and environmental indices** to move beyond simply detecting vegetation — the long-term goal is to help understand **how green a city is, where green spaces are located, and how they can be monitored over time.**
+The project combines **Computer Vision, Machine Learning, geospatial data analysis, and environmental indices** to move beyond simply detecting vegetation, the long-term goal is to help understand **how green a city is, where green spaces are located, and how they can be monitored over time.**
 
 ---
 
@@ -14,7 +14,7 @@ The project combines **Computer Vision, Machine Learning, geospatial data analys
 
 Urban green spaces play an important role in the environmental quality and livability of cities.
 
-However, assessing vegetation across an entire urban area manually can be time-consuming and difficult to update regularly.
+However, assessing vegetation across an entire urban area manually can be time consuming and difficult to update regularly.
 
 Satellite imagery provides another approach.
 

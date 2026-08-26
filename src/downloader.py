@@ -16,9 +16,6 @@ class DatasetDownloader:
 
         self.create_metadata_file()
 
-    # ==========================================================
-    # CREATE metadata.csv
-    # ==========================================================
 
     def create_metadata_file(self):
 
@@ -37,9 +34,6 @@ class DatasetDownloader:
                 "path"
             ])
 
-    # ==========================================================
-    # READ cities.yaml
-    # ==========================================================
 
     def load_cities(self):
 
@@ -47,9 +41,6 @@ class DatasetDownloader:
 
             return yaml.safe_load(file)
 
-    # ==========================================================
-    # SAVE metadata
-    # ==========================================================
 
     def save_metadata(self,
                       city,
@@ -77,9 +68,6 @@ class DatasetDownloader:
 
             ])
 
-    # ==========================================================
-    # DOWNLOAD CITY
-    # ==========================================================
 
     def download_city(self,
                       city_name,
@@ -125,9 +113,6 @@ class DatasetDownloader:
                     path
                 )
 
-    # ==========================================================
-    # RUN
-    # ==========================================================
 
     def run(self):
 

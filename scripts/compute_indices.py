@@ -76,7 +76,7 @@ def process_safe(safe_path, output_folder):
 
     blue_path = find_band(safe_path, "B02")
     green_path = find_band(safe_path, "B03")
-    red_path = find_band(safe_path, "B04")
+    red_path = find_band(safe_path,"B04")
     nir_path = find_band(safe_path, "B08")
 
     blue, profile = read_band(blue_path)

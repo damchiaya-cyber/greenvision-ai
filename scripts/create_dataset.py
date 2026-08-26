@@ -5,9 +5,6 @@ from sklearn.model_selection import train_test_split
 from tqdm import tqdm
 
 
-# ============================================================
-# CONFIGURATION
-# ============================================================
 
 PROCESSED_DIR = Path("data/processed")
 DATASET_DIR = Path("data/dataset")
@@ -15,17 +12,11 @@ DATASET_DIR = Path("data/dataset")
 PATCH_SIZE = 128
 STRIDE = 128
 
-# NDVI threshold used to create vegetation masks.
-# Values above this are considered vegetation.
 NDVI_THRESHOLD = 0.30
 
 TRAIN_RATIO = 0.80
 RANDOM_STATE = 42
 
-
-# ============================================================
-# DIRECTORIES
-# ============================================================
 
 TRAIN_IMAGES = DATASET_DIR / "train" / "images"
 TRAIN_MASKS = DATASET_DIR / "train" / "masks"
@@ -41,10 +32,6 @@ for directory in [
 ]:
     directory.mkdir(parents=True, exist_ok=True)
 
-
-# ============================================================
-# FIND NDVI FILES
-# ============================================================
 
 def find_ndvi_files():
 
@@ -64,10 +51,6 @@ def find_ndvi_files():
     return files
 
 
-# ============================================================
-# CREATE PATCHES
-# ============================================================
-
 def create_patches(ndvi_path):
 
     print()
@@ -79,7 +62,6 @@ def create_patches(ndvi_path):
 
         profile = src.profile
 
-    # Remove invalid values
     ndvi = np.nan_to_num(
         ndvi,
         nan=0.0,
@@ -103,18 +85,14 @@ def create_patches(ndvi_path):
                 x:x + PATCH_SIZE
             ]
 
-            # Skip completely empty patches
             if np.all(patch == 0):
                 continue
 
-            # Normalize NDVI from [-1, 1] approximately to [0, 1]
             image = (patch + 1.0) / 2.0
             image = np.clip(image, 0.0, 1.0)
 
-            # Vegetation mask
             mask = (patch >= NDVI_THRESHOLD).astype(np.uint8)
 
-            # Skip patches containing almost no useful information
             vegetation_ratio = mask.mean()
 
             if vegetation_ratio < 0.01:
@@ -128,10 +106,6 @@ def create_patches(ndvi_path):
     return image_patches, mask_patches
 
 
-# ============================================================
-# SAVE PATCH
-# ============================================================
-
 def save_patch(image, mask, directory_images, directory_masks, index):
 
     image_path = directory_images / f"patch_{index:05d}.npy"
@@ -140,10 +114,6 @@ def save_patch(image, mask, directory_images, directory_masks, index):
     np.save(image_path, image.astype(np.float32))
     np.save(mask_path, mask.astype(np.uint8))
 
-
-# ============================================================
-# MAIN
-# ============================================================
 
 def main():
 
@@ -157,16 +127,12 @@ def main():
     if not ndvi_files:
 
         print()
-        print("❌ No NDVI files found.")
+        print("No NDVI files found.")
         print("Run compute_indices first.")
         return
 
     all_images = []
     all_masks = []
-
-    # --------------------------------------------------------
-    # Process every NDVI image
-    # --------------------------------------------------------
 
     for ndvi_file in ndvi_files:
 
@@ -182,12 +148,8 @@ def main():
 
     if not all_images:
 
-        print("❌ No patches were created.")
+        print("No patches were created.")
         return
-
-    # --------------------------------------------------------
-    # Train / validation split
-    # --------------------------------------------------------
 
     indices = np.arange(len(all_images))
 
@@ -202,10 +164,6 @@ def main():
     print(f"Training patches:   {len(train_indices)}")
     print(f"Validation patches: {len(val_indices)}")
 
-    # --------------------------------------------------------
-    # Save training patches
-    # --------------------------------------------------------
-
     print()
     print("Saving training dataset...")
 
@@ -219,9 +177,6 @@ def main():
             i
         )
 
-    # --------------------------------------------------------
-    # Save validation patches
-    # --------------------------------------------------------
 
     print()
     print("Saving validation dataset...")
@@ -236,9 +191,6 @@ def main():
             i
         )
 
-    # --------------------------------------------------------
-    # Summary
-    # --------------------------------------------------------
 
     print()
     print("=" * 60)
