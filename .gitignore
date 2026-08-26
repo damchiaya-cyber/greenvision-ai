@@ -1,35 +1,114 @@
-# Environment & secrets
-.env
+# ============================================================
+# GREENVISION AI - GITIGNORE
+# ============================================================
 
-# Python cache
+# ------------------------------------------------------------
+# Python
+# ------------------------------------------------------------
+
 __pycache__/
 *.py[cod]
-*.pyo
+*$py.class
 
-# Virtual environments
+*.pyo
+*.pyd
+
+# Python virtual environments
 .venv/
 venv/
 env/
+ENV/
+myvenv/
 
-# Satellite data - too large for GitHub
-data/raw/
-data/processed/
+# ------------------------------------------------------------
+# IDE / Editors
+# ------------------------------------------------------------
 
-# Generated files
-*.log
-
-# IDE
 .vscode/
 .idea/
 
+# VS Code local settings
+*.code-workspace
+
+# ------------------------------------------------------------
 # Jupyter
+# ------------------------------------------------------------
+
 .ipynb_checkpoints/
 
-# Testing / coverage
-.pytest_cache/
-.coverage
-htmlcov/
+# ------------------------------------------------------------
+# Satellite imagery / generated datasets
+# ------------------------------------------------------------
+
+# Raw satellite imagery
+data/raw/
+
+# Processed satellite imagery
+data/processed/
+
+# Generated training/validation patches
+data/dataset/
+
+# ------------------------------------------------------------
+# Generated model files
+# ------------------------------------------------------------
+
+models/*.keras
+models/*.h5
+models/*.hdf5
+models/*.ckpt
+models/*.weights.h5
+
+# TensorFlow checkpoints
+*.ckpt
+checkpoint
+checkpoint.*
+
+# ------------------------------------------------------------
+# Generated predictions and analysis outputs
+# ------------------------------------------------------------
+
+outputs/
+
+# ------------------------------------------------------------
+# Temporary files
+# ------------------------------------------------------------
+
+*.tmp
+*.temp
+*.log
 
 # OS files
 .DS_Store
 Thumbs.db
+desktop.ini
+
+# ------------------------------------------------------------
+# Streamlit
+# ------------------------------------------------------------
+
+.streamlit/secrets.toml
+
+# ------------------------------------------------------------
+# Testing / coverage
+# ------------------------------------------------------------
+
+.pytest_cache/
+.coverage
+htmlcov/
+
+# ------------------------------------------------------------
+# Build / packaging
+# ------------------------------------------------------------
+
+build/
+dist/
+*.egg-info/
+
+# ------------------------------------------------------------
+# Environment variables / secrets
+# ------------------------------------------------------------
+
+.env
+.env.*
+!.env.example
