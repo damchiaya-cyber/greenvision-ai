@@ -1,87 +1,42 @@
 # 🌱 GreenVision AI
 
-### Intelligent Urban Green Space Analysis from Satellite Imagery
+### Intelligent Urban Green-Space Analysis from Satellite Imagery
 
-> **Turning satellite imagery into actionable insights for greener and more sustainable cities.**
+> **Turning satellite imagery into actionable insights for greener, more sustainable cities.**
 
-GreenVision AI is an **AI and remote-sensing project** that explores how satellite imagery can be used to automatically identify urban green spaces and transform them into meaningful environmental indicators.
+GreenVision AI is an **AI and remote-sensing project** that uses satellite imagery to automatically detect urban vegetation and turn it into environmental indicators. It combines **computer vision, machine learning, geospatial analysis, and environmental indices** to move beyond "where is the vegetation?" toward questions that support real decisions: *how green is this city, where are its green spaces, and how could that be tracked over time?*
 
-The project combines **Computer Vision, Machine Learning, geospatial data analysis, and environmental indices** to move beyond simply detecting vegetation, the long-term goal is to help understand **how green a city is, where green spaces are located, and how they can be monitored over time.**
+An interactive Streamlit dashboard sits on top of the pipeline, letting anyone browse the results city by city.
 
 ---
+
+## 🏢 Project Background
+
+GreenVision AI started as an internship project at the **Centre Régional d'Investissement de l'Oriental (CRI Oriental)**, exploring how satellite imagery and AI could quantify green spaces in urban areas. I've since continued developing it independently, broadening the scope toward computer vision, geospatial analysis, and data-driven urban planning.
+
+> **From an internship problem → to an evolving AI portfolio project.**
 
 ## 🌍 Why This Project?
 
-Urban green spaces play an important role in the environmental quality and livability of cities.
-
-However, assessing vegetation across an entire urban area manually can be time consuming and difficult to update regularly.
-
-Satellite imagery provides another approach.
-
-Instead of asking:
-
-> *"Where is the vegetation?"*
-
-GreenVision AI aims to explore questions such as:
+Manually assessing vegetation across a whole city is slow and hard to keep current. Satellite imagery offers a scalable alternative. GreenVision AI explores:
 
 * 🌱 How much of an urban area is covered by vegetation?
 * 🗺️ Where are green spaces distributed?
-* 📊 How can vegetation coverage be quantified?
-* 📈 How could green-space indicators be monitored over time?
-* 🏙️ How could this information support smarter urban planning?
-
-The project therefore treats **AI as a tool for analysis and decision-making**, rather than as an end in itself.
+* 📊 How can vegetation coverage be quantified and compared across cities?
+* 📈 How could these indicators be tracked over time?
 
 ---
-## 🏢 Project Background
-
-GreenVision AI originated during my internship at the **Centre Régional d'Investissement de l'Oriental (CRI Oriental)**, where the project idea was proposed as part of an exploration of urban green-space analysis.
-
-The objective was to investigate how **satellite imagery, environmental indices, and Artificial Intelligence** could be used to identify and quantify green spaces within urban areas.
-
-The initial work developed during the internship provided the foundation for this project. I am continuing to develop and improve it as an independent portfolio project, with a broader focus on **Computer Vision, geospatial data analysis, environmental intelligence, and data-driven urban planning**.
-
-> **From an internship problem → to an evolving AI project.**
-
 
 ## 🎯 Project Objectives
 
-The project is being developed around four main objectives:
-
-### 1. 🛰️ Acquire satellite data
-
-Retrieve and process **Sentinel-2 imagery** from the Copernicus Data Space Ecosystem.
-
-### 2. 🌿 Analyze vegetation
-
-Calculate environmental indices such as:
-
-* **NDVI** — Normalized Difference Vegetation Index
-* **ExG** — Excess Green Index
-
-These indices provide different ways of identifying and analyzing vegetation.
-
-### 3. 🤖 Detect green spaces with AI
-
-Develop a **semantic segmentation pipeline** capable of identifying vegetation directly from satellite imagery.
-
-The project explores deep-learning approaches such as **U-Net** for pixel-level segmentation.
-
-### 4. 📊 Transform detection into insights
-
-The long-term objective is to transform segmentation results into understandable environmental indicators, such as:
-
-* Green-space coverage
-* Green-space distribution
-* Green-space-per-capita indicators
-* Geographic visualizations
-* Comparisons between areas or cities
+1. **🛰️ Acquire satellite data** — retrieve Sentinel-2 imagery from the Copernicus Data Space Ecosystem.
+2. **🌿 Analyze vegetation** — compute NDVI (Normalized Difference Vegetation Index) and ExG (Excess Green Index).
+3. **🤖 Detect green spaces with AI** — a U-Net semantic segmentation model, trained on NDVI-derived patches, identifies vegetation pixel by pixel.
+4. **📊 Turn detection into insights** — clip predictions to municipality boundaries and calculate green-space coverage, then compare across cities in an interactive dashboard.
 
 ---
 
-# 🧠 Current Pipeline
-
-The current project pipeline includes:
+## 🧠 Pipeline
 
 ```text
 Copernicus Data Space
@@ -98,16 +53,20 @@ Image Preprocessing
         ↓
 NDVI / ExG Calculation
         ↓
-Dataset Creation
+Dataset Creation (128×128 patches)
         ↓
-Green Space Segmentation
+U-Net Training
         ↓
 Model Evaluation
         ↓
-Environmental Indicators
+Prediction + Municipality Clipping
+        ↓
+City Indicators
+        ↓
+Streamlit Dashboard
 ```
 
-### Currently implemented
+### Status
 
 * ✅ Copernicus Data Space authentication
 * ✅ Sentinel-2 product search
@@ -117,186 +76,152 @@ Environmental Indicators
 * ✅ Image preprocessing
 * ✅ NDVI computation
 * ✅ ExG computation
-* 🚧 Dataset creation and segmentation pipeline
-* 🚧 U-Net training and quantitative evaluation
-* 🔮 Interactive environmental analysis platform
+* ✅ Dataset creation and segmentation pipeline
+* ✅ U-Net training and quantitative evaluation
+* ✅ City-level indicators and comparison dashboard
+* 🔮 Historical / time-series monitoring
+* 🔮 Green-space-per-capita and additional Moroccan cities
 
-> **Note:** Features marked as 🚧 or 🔮 represent ongoing or planned development and are not presented as completed functionality.
-
----
-
-# 🗺️ Study Areas
-
-The current dataset includes:
-
-### 🇪🇸 Barcelona, Spain
-
-A large and diverse urban environment used as one of the study areas.
-
-### 🇲🇦 Oujda, Morocco
-
-A Moroccan urban study area that provides a locally relevant case for exploring vegetation distribution and urban sustainability.
-
-Future versions of the project may expand the analysis to additional Moroccan cities and other urban environments.
+> **Note:** 🔮 marks planned, not-yet-started work.
 
 ---
 
-# 🛠️ Technologies
+## 🤖 Model Performance
 
-### Programming & Data
+Evaluated on the held-out validation split (`scripts/evaluate.py`):
 
-* Python
-* NumPy
-* Pandas
-* Rasterio
-
-### Remote Sensing & Geospatial Analysis
-
-* Sentinel-2
-* Copernicus Data Space Ecosystem
-* NDVI
-* ExG
-* Raster data processing
-
-### Machine Learning
-
-* Deep Learning
-* Semantic Segmentation
-* U-Net
-* Computer Vision
-
-### Development
-
-* Requests
-* PyYAML
-* python-dotenv
+| Metric | Score |
+|---|---|
+| Accuracy | 98.29% |
+| Precision | 98.94% |
+| Recall | 97.95% |
+| Dice | 98.44% |
+| IoU | 96.92% |
 
 ---
 
-# 📁 Project Structure
+## 🗺️ Study Areas
+
+* 🇪🇸 **Barcelona, Spain** — a large, diverse urban environment.
+* 🇲🇦 **Oujda, Morocco** — a locally relevant Moroccan case study.
+
+Additional Moroccan cities are a planned extension.
+
+---
+
+## 🛠️ Technologies
+
+**Programming & data** — Python, NumPy, Pandas, Rasterio, GeoPandas
+**Remote sensing & geospatial** — Sentinel-2, Copernicus Data Space Ecosystem, NDVI, ExG, raster processing
+**Machine learning** — TensorFlow/Keras, U-Net, semantic segmentation, computer vision
+**App** — Streamlit, Matplotlib
+**Tooling** — Requests, PyYAML, python-dotenv, tqdm
+
+---
+
+## 📁 Project Structure
 
 ```text
-green-space-segmentation-ai/
+greenvision-ai/
+│
+├── app.py                       # Streamlit dashboard
+├── requirements.txt
 │
 ├── config/
-│   ├── cities.yaml
+│   ├── cities.yaml               # Study-area definitions
 │   └── settings.py
 │
 ├── scripts/
-│   ├── download_data.py
-│   ├── extract_safe.py
+│   ├── download_data.py          # Sentinel-2 search & download
 │   ├── check_safe.py
-│   ├── compute_indices.py
-│   ├── preprocess.py
-│   ├── create_dataset.py
-│   ├── train.py
-│   └── evaluate.py
+│   ├── extract_safe.py           # .SAFE archive extraction
+│   ├── compute_indices.py        # NDVI / ExG
+│   ├── create_dataset.py         # Patch dataset for training
+│   ├── train.py                  # Entry point → src/training/train_unet.py
+│   ├── evaluate.py                # Accuracy / precision / recall / Dice / IoU
+│   ├── predict.py
+│   └── calculate_city_indicators.py
 │
 ├── src/
-│   ├── cdse.py
+│   ├── cdse.py                   # Copernicus Data Space client
 │   ├── downloader.py
 │   ├── preprocessing.py
+│   ├── utils.py
 │   ├── training/
+│   │   └── train_unet.py
 │   └── inference/
+│       └── predict_image.py
 │
-├── data/
-│   ├── raw/
-│   └── processed/
-│
-├── requirements.txt
-└── README.md
+└── data/
+    ├── boundaries/                # Municipality boundary files (shapefiles, GeoJSON)
+    └── metadata/
 ```
+
+*(`data/raw/`, `data/processed/`, `data/dataset/`, `models/`, and `outputs/` are generated locally and git-ignored — see `.gitignore`.)*
 
 ---
 
-# 📊 From Detection to Decision Support
+## 🚀 Getting Started
 
-One of the main directions of GreenVision AI is to go beyond producing segmentation masks.
+```bash
+git clone https://github.com/damchiaya-cyber/greenvision-ai.git
+cd greenvision-ai
+pip install -r requirements.txt
+```
 
-The broader vision is to create a system where satellite imagery can be transformed into information that is easier for people to understand and use.
-
-For example:
+Set your Copernicus Data Space credentials in a local `.env` file (never commit this):
 
 ```text
-Satellite Image
-      ↓
-Vegetation Detection
-      ↓
-Spatial Analysis
-      ↓
-Green-Space Indicators
-      ↓
-Visualization
-      ↓
-Urban Environmental Insights
+CDSE_USERNAME=your_username
+CDSE_PASSWORD=your_password
 ```
 
-This could eventually support applications such as:
+Run the pipeline end to end, then launch the dashboard:
 
-* Urban sustainability analysis
-* Environmental monitoring
-* Green-space planning
-* City comparisons
-* Long-term vegetation monitoring
+```bash
+python -m scripts.download_data
+python -m scripts.extract_safe
+python -m scripts.compute_indices
+python -m scripts.create_dataset
+python -m scripts.train
+python -m scripts.evaluate
+python -m scripts.predict
+python -m scripts.calculate_city_indicators
+
+streamlit run app.py
+```
 
 ---
 
-# 🚀 Future Development
+## 🚀 Future Development
 
-The project is designed to evolve from an experimental segmentation pipeline into a more complete **urban environmental intelligence platform**.
-
-Planned improvements include:
-
-* [ ] Complete U-Net training pipeline
-* [ ] Quantitative model evaluation
-* [ ] IoU and Dice Score evaluation
-* [ ] Interactive satellite/segmentation maps
-* [ ] Green-space coverage dashboard
 * [ ] Green-space-per-capita calculation
-* [ ] Historical comparisons
+* [ ] Historical / time-series comparisons
 * [ ] City-level environmental reports
 * [ ] Additional Moroccan cities
 * [ ] Improved model generalization
-* [ ] Web-based visualization
 * [ ] Automated environmental reports
 
 ---
 
-# 🌱 Personal Motivation
+## 🌱 Personal Motivation
 
-This project is part of my broader interest in using **Artificial Intelligence and Data Analysis to understand real-world problems**.
-
-Rather than building an AI model simply to achieve a high accuracy score, I am interested in what happens **after the prediction**:
-
-> **What can we learn from the data?**
-
-> **How can we visualize it?**
-
-> **And how can the result support better decisions?**
-
-GreenVision AI is my exploration of that idea through **AI, remote sensing, environmental analysis, and smart-city applications.**
+This project reflects my broader interest in using AI and data analysis on real-world problems. Rather than optimizing for a benchmark score, I'm interested in what comes *after* the prediction: what the data shows, how to visualize it, and how it can support better decisions. GreenVision AI is my exploration of that through AI, remote sensing, environmental analysis, and smart-city applications.
 
 ---
 
-# 📌 Project Status
+## 📌 Project Status
 
-**Status:** 🚧 Active Development
-
-This project is continuously being improved as I strengthen my skills in:
-
-**Machine Learning · Computer Vision · Data Analysis · Remote Sensing · Geospatial Data · Software Development**
+**Status:** 🚧 Active development — core pipeline (data acquisition → segmentation → indicators → dashboard) is complete; extensions (time-series tracking, more cities) are in progress.
 
 ---
 
 ## 👩‍💻 Author
 
 **Aya Addamchi**
-
 Artificial Intelligence & Data
 
-Interested in:
-
-🏥 Healthcare AI · ⚽ Sports Analytics · 🌍 Tourism Intelligence · 🌱 Sustainable Cities · 📊 Business Intelligence
+Interested in: 🏥 Healthcare AI · ⚽ Sports Analytics · 🌍 Tourism Intelligence · 🌱 Sustainable Cities · 📊 Business Intelligence
 
 ---
 
